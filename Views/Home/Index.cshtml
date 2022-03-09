@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+<div class="text-center">
+    <h1 class="display-4">EBMS Invoice Table List</h1>
+    <label for="From">From:</label>
+    <input type="date" id="From" name="From">&nbsp;&nbsp;&nbsp;&nbsp;
+    <label for="To">To:</label>
+    <input type="date" id="To" name="To">
+    <input type="submit" class="datesubmit">
+</div>
+
+<div class="container mainDiv">
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $(document).on('click','.datesubmit',function(){
+             $.ajax({
+        url:"/Home/SubmitDate?FromDate=" +$('#From').val() +"&ToDate=" + $('#To').val(),
+        type: "Get",
+        success:function(response){
+            $('.mainDiv').empty();
+             $('.mainDiv').empty().append('Loading......! Please Wait...');
+    var jsonConst = '';
+    var chargesTag = '';
+    for(i=0;i<response.chargesnameList.length;i++){
+        chargesTag += '<th>'+response.chargesnameList[i]+'</th>'
+    }
+
+    jsonConst = '<table><tr class="tbltr"><th>S.No</th><th>Invoice No</th><th>Invoice Date</th><th>Customer Name</th>"'+ chargesTag +'"<th>Total Amount</th></tr>';
+    for(i = 0; i < response.invoiceTableViewModels.length;i++)
+    {
+        var chargeValues = '';
+        var position = 5;
+        for(j=0;j<response.chargesnameList.length;j++)
+        {
+             chargeValues += '<td class="chargeposition_'+i+'_'+ position++ +'"> -- </td>'
+        }
+        
+        jsonConst += '<tr id="row-'+i+'"><td>'+response.invoiceTableViewModels[i].sNo +'</td><td>'+response.invoiceTableViewModels[i].invoiceNumber +'</td><td>'+response.invoiceTableViewModels[i].invoiceDate +'</td><td>'+response.invoiceTableViewModels[i].customerName +'</td>'+ chargeValues +'<td>'+response.invoiceTableViewModels[i].totalAmount +'</td></tr>';
+        chargeValues = '';
+    }
+     $('.mainDiv').empty().append(jsonConst);
+    jsonConst = '';
+
+    for(i = 0; i < response.invoiceTableViewModels.length;i++)
+    {
+        for(j=0;j<response.invoiceTableViewModels[i].chargersList.length;j++)
+        {
+            $('.chargeposition_'+i+'_'+response.invoiceTableViewModels[i].chargersList[j].chargePosition+'').empty().append(response.invoiceTableViewModels[i].chargersList[j].chargeValue);
+        }
+    }
+        }
+    });
+        });
+
+    });
+
+</script>
