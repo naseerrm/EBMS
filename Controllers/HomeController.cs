@@ -25,7 +25,12 @@ namespace EBMSProject.Controllers
         {
             return View();
         }
-
+        /// <summary>
+        /// submit controller file
+        /// </summary>
+        /// <param name="FromDate"></param>
+        /// <param name="ToDate"></param>
+        /// <returns></returns>
         public JsonResult SubmitDate(string FromDate,string ToDate)
         {
             List<InvoiceTableViewModel> invoiceDetailsList = new List<InvoiceTableViewModel>();
